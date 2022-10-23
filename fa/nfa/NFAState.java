@@ -30,6 +30,7 @@ public class NFAState extends State{
             stateList = new ArrayList<>();
             transitions.put(onSymb, stateList);
         }
+        
         stateList.add(toState);
     }
     
