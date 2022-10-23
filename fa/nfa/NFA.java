@@ -43,6 +43,7 @@ public class NFA implements NFAInterface {
                 alreadyExist = true;
                 System.out.println("WARNING: A state with name " + name + " already exists in the NFA");
             }
+            
         if(!alreadyExist) this.states.add(new NFAState(name, false, false));
     }
 
