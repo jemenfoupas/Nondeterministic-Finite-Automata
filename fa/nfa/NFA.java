@@ -62,8 +62,16 @@ public class NFA implements NFAInterface {
 
     @Override
     public void addTransition(String fromState, char onSymb, String toState) {
-        // TODO Auto-generated method stub
-        
+        for(NFAState state: states){
+            if(state.getName().equals(fromState)){
+                state.addTransition(onSymb, toState);
+            }
+        }
+
+        if(!sigma.contains(onSymb)){
+            sigma.add(onSymb); //adds symbol to sigma if not already added
+            qerror.addTransition(onSymb, "qerror");
+        }
     }
 
     @Override
