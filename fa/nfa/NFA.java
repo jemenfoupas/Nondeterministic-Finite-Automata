@@ -89,7 +89,8 @@ public class NFA implements NFAInterface {
 
     @Override
     public State getStartState() {
-        // TODO Auto-generated method stub
+        for(NFAState state: states)
+            if(state.isStartState()) return state;
         return null;
     }
 
