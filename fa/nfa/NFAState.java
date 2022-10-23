@@ -1,5 +1,6 @@
 package fa.nfa;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -7,7 +8,7 @@ import fa.State;
 
 public class NFAState extends State{
 
-    private HashMap<Character, Collection<String>> transitions; // map of characters to a list ofstrings representing states outgoing transitions
+    private HashMap<Character, ArrayList<String>> transitions; // map of characters to a list ofstrings representing states outgoing transitions
     private boolean startState; // boolean for if state is start state
     private boolean finalState; // boolean for if state is a final state
     
@@ -16,6 +17,44 @@ public class NFAState extends State{
         this.startState = isStartState;
         this.finalState = isFinalState;
         transitions = new HashMap<>();
+    }
+
+    /**
+     * Adds a transition to the state list
+     * @param onSymb char symbol for transition to be added
+     * @param toState String name of state that transition ends on
+     */
+    public void addTransition(char onSymb, String toState){
+        ArrayList<String> stateList = transitions.get(onSymb);
+        if(stateList == null) {
+            stateList = new ArrayList<>();
+            transitions.put(onSymb, stateList);
+        }
+        stateList.add(toState);
+    }
+    
+    /**
+     * returns name of state 
+     * @return String
+     */
+    public String getName() {
+        return this.name;
+    }
+
+    /**
+     * returns true if state is a start state
+     * @return boolean
+     */
+    public boolean isStartState() {
+        return startState;
+    }
+
+    /**
+     * returns true if state is a final state
+     * @return boolean
+     */
+    public boolean isFinalState() {
+        return finalState;
     }
 
     /**
