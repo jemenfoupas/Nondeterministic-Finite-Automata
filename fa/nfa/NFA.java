@@ -1,5 +1,6 @@
 package fa.nfa;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import fa.State;
@@ -7,14 +8,31 @@ import fa.dfa.DFA;
 
 public class NFA implements NFAInterface {
 
+    private Set<NFAState> states; // set of states in dfa
+    private Set<Character> sigma; // set of symbols in language of dfa
+    private NFAState qerror; //qerror state for if a bad transition is attempted
+
+     /**
+     * Constructor
+     * instance the instance variables
+     */
     public NFA() {
-        
+        this.states = new HashSet<>();
+        this.sigma = new HashSet<>();
+
+        qerror = new NFAState("qerror", false, false);
     }
 
     @Override
     public void addStartState(String name) {
-        // TODO Auto-generated method stub
-        
+        boolean alreadyExist = false;
+        for(NFAState state : states) {
+            if(state.getName().equals(name)){
+                alreadyExist = true;
+                state.setStartState(true);
+            }
+        }
+        if(!alreadyExist) this.states.add(new NFAState(name, true, false));
     }
 
     @Override
