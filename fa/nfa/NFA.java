@@ -1,5 +1,6 @@
 package fa.nfa;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -107,8 +108,14 @@ public class NFA implements NFAInterface {
 
     @Override
     public Set<NFAState> getToState(NFAState from, char onSymb) {
-        // TODO Auto-generated method stub
-        return null;
+        ArrayList<String> nextStatesName = from.getTransitions(onSymb);
+        Set<NFAState> nextStates =  new HashSet<>();
+
+        for(String name: nextStatesName){
+            for(NFAState state: states)
+                if(state.getName() == name) nextStates.add(state);
+        }
+        return nextStates;
     }
 
     @Override
