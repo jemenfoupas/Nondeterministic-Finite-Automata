@@ -138,34 +138,48 @@ public class NFA implements NFAInterface {
         visited.add(startSet);
         //add states to rtVal
         rtVal.addStartState(startSet.toString());
+        boolean fin = false;
         for(HashSet<NFAState> s : pSet){
             if(!rtVal.getStates().contains(new DFAState(s.toString()))){
-                rtVal.addState(s.toString());
-                //
+                for(NFAState f : s){
+                    if(f.isFinalState()){
+                        fin = true;
+                    }
+                }
+                if(!fin){
+                    rtVal.addState(s.toString());
+                }else{
+                    rtVal.addFinalState(s.toString());
+                }
             }
+            fin = false;
         }
         //variables for BFS
         Set<NFAState> curr;
-        Set<NFAState> next;
-        DFAState currState;
+        Set<NFAState> next = new HashSet<NFAState>();
         //BFS
         while(!queue.isEmpty()){
-            //remove first element
+            //remove first
             curr = queue.remove();
-            //find currState
-            currState = new DFAState(curr.toString());
-            //add it to rtVal
-            if(!rtVal.getStates().contains(new DFAState(curr.toString()))){
-                rtVal.addState(curr.toString());
-            }
-            //mark as visited
+            //mark curr as visited
             visited.add(curr);
-            //insert all transitions that aren't visited to queue
+            //insert unvisited neighbors into queue
             for(Character c : this.sigma){
-                next = this.getToState(currState, c);
+                for(NFAState s : curr){
+                    next.addAll(this.getToState(s, c));
+                }
                 if(!visited.contains(next)){
                     queue.add(next);
                 }
+                next.clear();
+            }
+            //insert all transitions into rtVal
+            for(Character c : this.sigma){
+                for(NFAState s : curr){
+                    next.addAll(this.getToState(s, c));
+                }
+                queue.add(next);
+                next.clear();
             }
         }
 
