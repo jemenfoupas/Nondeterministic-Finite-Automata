@@ -200,7 +200,19 @@ public class NFA implements NFAInterface {
 
     @Override
     public Set<NFAState> eClosure(NFAState s) {
-        // TODO Auto-generated method stub
-        return null;
+        ArrayList<String> nextStates = s.getTransitions('e');
+        Set<NFAState> eTransitions =  new HashSet<>();
+
+        for(String str: nextStates){
+            for(NFAState state: states)
+                if(state.getName().equals(str)){
+                    eTransitions.add(state);
+                }
+        }
+
+        for(NFAState state: eTransitions){
+            eTransitions.addAll(eClosure(state));
+        }
+        return eTransitions;
     }
 }
