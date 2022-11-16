@@ -40,8 +40,12 @@ public class NFAState extends State{
      * @return 
      * @return String name of resulting state
      */
-    public ArrayList<String> getTransitions(char Character) {
-        ArrayList<String> nextStates = transitions.get(Character);
+    public ArrayList<String> getTransitions(char c) {
+        ArrayList<String> nextStates = this.transitions.get(c);
+        if(nextStates == null){
+            nextStates = new ArrayList<String>();
+            nextStates.add("");
+        }
         return nextStates;
     }
 
