@@ -238,7 +238,7 @@ public class NFA implements NFAInterface {
 
     @Override
     public Set<NFAState> eClosure(NFAState s) {
-        ArrayList<String> nextStates = s.getTransitions('e');
+        /*ArrayList<String> nextStates = s.getTransitions('e');
         Set<NFAState> eTransitions =  new HashSet<>();
 
         for(String str: nextStates){
@@ -251,6 +251,22 @@ public class NFA implements NFAInterface {
         for(NFAState state: eTransitions){
             eTransitions.addAll(eClosure(state));
         }
-        return eTransitions;
+        return eTransitions;*/
+        HashSet<NFAState> rtVal = new HashSet<NFAState>();
+        HashSet<NFAState> visited = new HashSet<NFAState>();
+        rtVal = DFS(s, visited);
+        return rtVal;
+    }
+
+    private HashSet<NFAState> DFS(NFAState s, HashSet<NFAState> v){
+        HashSet<NFAState> rtVal = new HashSet<NFAState>();
+        v.add(s);
+        for(NFAState st : this.getToState(s, 'e')){
+            rtVal.add(st);
+            if(!v.contains(st)){
+                rtVal.addAll(DFS(st, v));
+            }
+        }
+        return rtVal;
     }
 }
