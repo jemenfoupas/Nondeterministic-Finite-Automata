@@ -137,7 +137,11 @@ public class NFA implements NFAInterface {
         ArrayList<Set<NFAState>> visited = new ArrayList<Set<NFAState>>();
         visited.add(startSet);
         //add states to rtVal
+        /* 
         rtVal.addStartState(startSet.toString());
+        */
+        boolean isStartSet = false;
+        boolean foundStart = false;
         boolean fin = false;
         for(HashSet<NFAState> s : pSet){
             if(!rtVal.getStates().contains(new DFAState(s.toString()))){
@@ -146,13 +150,26 @@ public class NFA implements NFAInterface {
                         fin = true;
                     }
                 }
+                if(s.size() == 1 && !foundStart){
+                    for(NFAState st : s){
+                        if(st.isStartState()){
+                            isStartSet = true;
+                            foundStart = true;
+                        }
+                    }
+                }
                 if(!fin){
-                    rtVal.addState(s.toString());
+                    if(isStartSet){
+                        rtVal.addStartState(s.toString());
+                    }else{
+                        rtVal.addState(s.toString());
+                    }
                 }else{
                     rtVal.addFinalState(s.toString());
                 }
             }
             fin = false;
+            isStartSet = false;
         }
         //variables for BFS
         Set<NFAState> curr;
