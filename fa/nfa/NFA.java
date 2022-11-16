@@ -158,22 +158,28 @@ public class NFA implements NFAInterface {
                         }
                     }
                 }
-                if(!fin){
-                    if(isStartSet){
-                        rtVal.addStartState(s.toString());
+                if(!s.isEmpty()){
+                    if(!fin){
+                        if(isStartSet){
+                            rtVal.addStartState(s.toString());
+                        }else{
+                            rtVal.addState(s.toString());
+                        }
                     }else{
-                        rtVal.addState(s.toString());
+                        rtVal.addFinalState(s.toString());
                     }
-                }else{
-                    rtVal.addFinalState(s.toString());
                 }
             }
             fin = false;
             isStartSet = false;
         }
+        //add qerror to rtval
+        rtVal.addState("qerror");
         //variables for BFS
         Set<NFAState> curr;
         Set<NFAState> next = new HashSet<NFAState>();
+        String cString;
+        String nString;
         //BFS
         while(!queue.isEmpty()){
             //remove first
@@ -185,18 +191,30 @@ public class NFA implements NFAInterface {
                 for(NFAState s : curr){
                     next.addAll(this.getToState(s, c));
                 }
-                if(!visited.contains(next)){
-                    queue.add(next);
+                if(!visited.contains(next) && !next.isEmpty()){
+                    Set<NFAState> queueSet = new HashSet<NFAState>();
+                    queueSet.addAll(next);
+                    queue.add(queueSet);
                 }
                 next.clear();
             }
             //insert all transitions into rtVal
-            for(Character c : this.sigma){
-                for(NFAState s : curr){
-                    next.addAll(this.getToState(s, c));
+            cString = curr.toString();
+            if(!cString.equals("[]")){
+                for(Character c : this.sigma){
+                    if(!c.equals('e')){
+                        for(NFAState s : curr){
+                            next.addAll(this.getToState(s,c));
+                        }
+                        nString = next.toString();
+                        if(!nString.equals("[]")){
+                            rtVal.addTransition(cString, c, nString);
+                        }else{
+                            rtVal.addTransition(cString, c, "qerror");
+                        }
+                        next.clear();
+                    }
                 }
-                queue.add(next);
-                next.clear();
             }
         }
 
@@ -209,8 +227,11 @@ public class NFA implements NFAInterface {
         Set<NFAState> nextStates =  new HashSet<>();
 
         for(String name: nextStatesName){
-            for(NFAState state: states)
-                if(state.getName() == name) nextStates.add(state);
+            for(NFAState state: states){
+                if(state.getName().equals(name)){
+                     nextStates.add(state);
+                }
+            }
         }
         return nextStates;
     }
