@@ -107,25 +107,6 @@ public class NFA implements NFAInterface {
     public DFA getDFA() {
         //create return value
         DFA rtVal = new DFA();
-        //create powerset
-        Set<HashSet<NFAState>> pSet = new HashSet<HashSet<NFAState>>();
-        HashSet<NFAState> tmpSet;
-        int pSetSize = (int)Math.pow(2, this.states.size());
-        NFAState statesArray[] = new NFAState[this.states.size()];
-        int i = 0;
-        for(NFAState s : this.states){
-            statesArray[i] = s;
-            i++;
-        }
-        for(i=0; i<pSetSize; i++){
-            tmpSet = new HashSet<NFAState>();
-            for(int k=0; k<this.states.size(); k++){
-                if((i & (1<<k))>0){
-                    tmpSet.add(statesArray[k]);
-                }
-            }
-            pSet.add(tmpSet);
-        }
         //create queue
         Queue<Set<NFAState>> queue = new LinkedList<Set<NFAState>>();
         //add set of start state to queue
@@ -136,82 +117,9 @@ public class NFA implements NFAInterface {
         //create set of visited sets
         Set<Set<NFAState>> visited = new HashSet<Set<NFAState>>();
         visited.add(startSet);
-        //add states to rtVal
+        //variables for BFS
         boolean started = false;
         boolean fin = false;
-        /*for(HashSet<NFAState> s : pSet){
-            if(!rtVal.getStates().contains(new DFAState(s.toString()))){
-                for(NFAState f : s){
-                    if(f.isFinalState()){
-                        fin = true;
-                    }
-                }
-                if(s.size() == 1 && !foundStart){
-                    for(NFAState st : s){
-                        if(st.isStartState()){
-                            isStartSet = true;
-                            foundStart = true;
-                        }
-                    }
-                }
-                if(!s.isEmpty()){
-                    if(!fin){
-                        if(isStartSet){
-                            rtVal.addStartState(s.toString());
-                        }else{
-                            rtVal.addState(s.toString());
-                        }
-                    }else{
-                        rtVal.addFinalState(s.toString());
-                    }
-                }
-            }
-            fin = false;
-            isStartSet = false;
-        }
-        //variables for BFS
-        Set<NFAState> curr;
-        Set<NFAState> next = new HashSet<NFAState>();
-        String cString;
-        String nString;
-        //BFS
-        while(!queue.isEmpty()){
-            //remove first
-            curr = queue.remove();
-            //mark curr as visited
-            visited.add(curr);
-            //insert unvisited neighbors into queue
-            for(Character c : this.sigma){
-                for(NFAState s : curr){
-                    next.addAll(this.getToState(s, c));
-                }
-                if(!visited.contains(next) && !next.isEmpty()){
-                    Set<NFAState> queueSet = new HashSet<NFAState>();
-                    queueSet.addAll(next);
-                    queue.add(queueSet);
-                }
-                next.clear();
-            }
-            //insert all transitions into rtVal
-            cString = curr.toString();
-            if(!cString.equals("[]")){
-                for(Character c : this.sigma){
-                    if(!c.equals('e')){
-                        for(NFAState s : curr){
-                            next.addAll(this.getToEClosedState(s,c));
-                        }
-                        nString = next.toString();
-                        if(!nString.equals("[]")){
-                            rtVal.addTransition(cString, c, nString);
-                        }else{
-                            rtVal.addTransition(cString, c, "qerror");
-                        }
-                        next.clear();
-                    }
-                }
-            }
-        }*/
-        //variables for BFS
         Set<NFAState> curr;
         Set<NFAState> queueSet;
         Set<NFAState> next = new HashSet<NFAState>();
@@ -334,19 +242,19 @@ public class NFA implements NFAInterface {
             eTransitions.addAll(eClosure(state));
         }
         return eTransitions;*/
-        HashSet<NFAState> rtVal = new HashSet<NFAState>();
-        HashSet<NFAState> visited = new HashSet<NFAState>();
-        rtVal = DFS(s, visited);
+        HashSet<NFAState> rtVal = new HashSet<NFAState>(); //return value Set of NFAState
+        HashSet<NFAState> visited = new HashSet<NFAState>(); //Set of NFAState for DFS search
+        rtVal = DFS(s, visited); //start DFS search
         return rtVal;
     }
-
+ 
     private HashSet<NFAState> DFS(NFAState s, HashSet<NFAState> v){
-        HashSet<NFAState> rtVal = new HashSet<NFAState>();
-        v.add(s);
-        for(NFAState st : this.getToState(s, 'e')){
-            rtVal.add(st);
-            if(!v.contains(st)){
-                rtVal.addAll(DFS(st, v));
+        HashSet<NFAState> rtVal = new HashSet<NFAState>(); //return value Set of NFAState
+        v.add(s); //add state to visited
+        for(NFAState st : this.getToState(s, 'e')){ //for every state that we can reach with e
+            rtVal.add(st); //add the state to the return value
+            if(!v.contains(st)){ //if we have not visited it already
+                rtVal.addAll(DFS(st, v)); //add all states returned from DFS to return value
             }
         }
         return rtVal;
