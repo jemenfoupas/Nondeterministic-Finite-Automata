@@ -133,17 +133,13 @@ public class NFA implements NFAInterface {
         Set<NFAState> startSet = new HashSet<NFAState>();
         startSet.add(start);
         queue.add(startSet);
-        //create array of visited sets
-        ArrayList<Set<NFAState>> visited = new ArrayList<Set<NFAState>>();
+        //create set of visited sets
+        Set<Set<NFAState>> visited = new HashSet<Set<NFAState>>();
         visited.add(startSet);
         //add states to rtVal
-        /* 
-        rtVal.addStartState(startSet.toString());
-        */
-        boolean isStartSet = false;
-        boolean foundStart = false;
+        boolean started = false;
         boolean fin = false;
-        for(HashSet<NFAState> s : pSet){
+        /*for(HashSet<NFAState> s : pSet){
             if(!rtVal.getStates().contains(new DFAState(s.toString()))){
                 for(NFAState f : s){
                     if(f.isFinalState()){
@@ -172,16 +168,6 @@ public class NFA implements NFAInterface {
             }
             fin = false;
             isStartSet = false;
-        }
-        //add qerror to rtval
-        rtVal.addState("qerror");
-        //add qerror to rtVal
-        for(char c : this.sigma){
-            if(c != 'e'){
-                for(DFAState s : rtVal.getStates()){
-                    rtVal.addTransition(s.toString(), c, "qerror");
-                }
-            }
         }
         //variables for BFS
         Set<NFAState> curr;
@@ -222,6 +208,77 @@ public class NFA implements NFAInterface {
                         }
                         next.clear();
                     }
+                }
+            }
+        }*/
+        //variables for BFS
+        Set<NFAState> curr;
+        Set<NFAState> queueSet;
+        Set<NFAState> next = new HashSet<NFAState>();
+        String cString;
+        //BFS for states
+        while(!queue.isEmpty()){
+            //remove first
+            curr = queue.remove();
+            cString = curr.toString();
+            //mark curr as visited
+            visited.add(curr);
+            //add curr to rtVal
+            if(started){
+                for(NFAState s : curr){
+                    if(s.isFinalState()){
+                        fin = true;
+                    }
+                }
+                if(fin){
+                    rtVal.addFinalState(cString);
+                }else{
+                    rtVal.addState(cString);
+                }
+            }else{
+                rtVal.addStartState(cString);
+                started = true;
+            }
+            fin = false;
+            //insert e closed neighbors into queue
+            for(char c : this.sigma){
+                if(c != 'e'){
+                    for(NFAState s : curr){
+                        next.addAll(this.getToEClosedState(s, c));
+                    }
+                    if(!visited.contains(next) && !next.isEmpty()){
+                        queueSet = new HashSet<NFAState>();
+                        queueSet.addAll(next);
+                        queue.add(queueSet);
+                    }
+                    next.clear();
+                }
+            }
+        }
+        //add transitions
+        queue.clear();
+        visited.clear();
+        queue.add(startSet);
+        //BFS again for transitions
+        while(!queue.isEmpty()){
+            //remove first
+            curr = queue.remove();
+            cString = curr.toString();
+            //mark curr as visited
+            visited.add(curr);
+            //insert e closed neighbors into queue
+            for(char c : this.sigma){
+                if(c != 'e'){
+                    for(NFAState s : curr){
+                        next.addAll(this.getToEClosedState(s, c));
+                    }
+                    if(!visited.contains(next) && !next.isEmpty()){
+                        queueSet = new HashSet<NFAState>();
+                        queueSet.addAll(next);
+                        queue.add(queueSet);
+                    }
+                    rtVal.addTransition(cString, c, next.toString());
+                    next.clear();
                 }
             }
         }
