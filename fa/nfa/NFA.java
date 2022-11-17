@@ -175,6 +175,14 @@ public class NFA implements NFAInterface {
         }
         //add qerror to rtval
         rtVal.addState("qerror");
+        //add qerror to rtVal
+        for(char c : this.sigma){
+            if(c != 'e'){
+                for(DFAState s : rtVal.getStates()){
+                    rtVal.addTransition(s.toString(), c, "qerror");
+                }
+            }
+        }
         //variables for BFS
         Set<NFAState> curr;
         Set<NFAState> next = new HashSet<NFAState>();
@@ -204,7 +212,7 @@ public class NFA implements NFAInterface {
                 for(Character c : this.sigma){
                     if(!c.equals('e')){
                         for(NFAState s : curr){
-                            next.addAll(this.getToState(s,c));
+                            next.addAll(this.getToEClosedState(s,c));
                         }
                         nString = next.toString();
                         if(!nString.equals("[]")){
@@ -217,7 +225,15 @@ public class NFA implements NFAInterface {
                 }
             }
         }
+        return rtVal;
+    }
 
+    private Set<NFAState> getToEClosedState(NFAState from, char onSymb){
+        Set<NFAState> rtVal = new HashSet<NFAState>();
+        for(NFAState s : this.getToState(from, onSymb)){
+            rtVal.add(s);
+            rtVal.addAll(eClosure(s));
+        }
         return rtVal;
     }
 
