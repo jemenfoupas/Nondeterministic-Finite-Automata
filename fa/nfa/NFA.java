@@ -216,6 +216,7 @@ public class NFA implements NFAInterface {
         Set<NFAState> queueSet;
         Set<NFAState> next = new HashSet<NFAState>();
         String cString;
+        boolean add = true;
         //BFS for states
         while(!queue.isEmpty()){
             //remove first
@@ -223,30 +224,38 @@ public class NFA implements NFAInterface {
             cString = curr.toString();
             //mark curr as visited
             visited.add(curr);
-            //add curr to rtVal
-            if(started){
-                for(NFAState s : curr){
-                    if(s.isFinalState()){
-                        fin = true;
-                    }
+            //add curr to rtVal if not there already
+            for(DFAState s : rtVal.getStates()){
+                if(s.toString().equals(cString)){
+                    add = false;
                 }
-                if(fin){
-                    rtVal.addFinalState(cString);
-                }else{
-                    rtVal.addState(cString);
-                }
-            }else{
-                rtVal.addStartState(cString);
-                started = true;
             }
-            fin = false;
+            if(add){
+                if(started){
+                    for(NFAState s : curr){
+                        if(s.isFinalState()){
+                            fin = true;
+                        }
+                    }
+                    if(fin){
+                        rtVal.addFinalState(cString);
+                    }else{
+                        rtVal.addState(cString);
+                    }
+                }else{
+                    rtVal.addStartState(cString);
+                    started = true;
+                }
+                fin = false;
+            }
+            add = true;
             //insert e closed neighbors into queue
             for(char c : this.sigma){
                 if(c != 'e'){
                     for(NFAState s : curr){
                         next.addAll(this.getToEClosedState(s, c));
                     }
-                    if(!visited.contains(next) && !next.isEmpty()){
+                    if(!visited.contains(next)){
                         queueSet = new HashSet<NFAState>();
                         queueSet.addAll(next);
                         queue.add(queueSet);
@@ -272,7 +281,7 @@ public class NFA implements NFAInterface {
                     for(NFAState s : curr){
                         next.addAll(this.getToEClosedState(s, c));
                     }
-                    if(!visited.contains(next) && !next.isEmpty()){
+                    if(!visited.contains(next)){
                         queueSet = new HashSet<NFAState>();
                         queueSet.addAll(next);
                         queue.add(queueSet);
