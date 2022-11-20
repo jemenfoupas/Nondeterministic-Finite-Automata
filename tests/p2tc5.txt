@@ -1,0 +1,9 @@
+6
+0
+1 2 3 4 5
+0#1 1#1 1c1 1c2 1d1 1d4 2c3 3e5 3#3 3c3 3d3 4d3 5c6 5d6
+#ccd
+e
+###cdcddddcd#c
+#dd###
+####dcdddcccdcd##d

@@ -1,0 +1,9 @@
+2
+0
+1
+0e1 0a1 0a2 1e2 1a1 1b2 2a0
+aab
+b
+aa
+ba
+ee
