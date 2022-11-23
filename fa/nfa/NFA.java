@@ -18,7 +18,7 @@ public class NFA implements NFAInterface {
 
      /**
      * Constructor
-     * instance the instance variables
+     * instanciate the instance variables
      */
     public NFA() {
         this.states = new HashSet<>();
@@ -194,7 +194,7 @@ public class NFA implements NFAInterface {
                         queueSet.addAll(next);
                         queue.add(queueSet);
                     }
-                    rtVal.addTransition(cString, c, next.toString());
+                    rtVal.addTransition(cString, c, next.toString()); //add transitions
                     next.clear();
                 }
             }
@@ -248,6 +248,12 @@ public class NFA implements NFAInterface {
         return rtVal;
     }
  
+    /**
+     * Helper function for eClosure
+     * @param s NFAState from
+     * @param v set of NFAStates that have been visited
+     * @return set of NFAStates that can be reached on e transitions
+     */
     private HashSet<NFAState> DFS(NFAState s, HashSet<NFAState> v){
         HashSet<NFAState> rtVal = new HashSet<NFAState>(); //return value Set of NFAState
         v.add(s); //add state to visited
