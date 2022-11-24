@@ -36,8 +36,7 @@ public class NFAState extends State{
 
     /**
      * returns name of state resulting from transition on a symbol
-     * @param Character char transition symbol
-     * @return 
+     * @param c char transition symbol
      * @return String name of resulting state
      */
     public ArrayList<String> getTransitions(char c) {
