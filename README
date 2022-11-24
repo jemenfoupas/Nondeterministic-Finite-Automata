@@ -7,7 +7,10 @@ This program is a java representation of a Nondeterministic Finite Automata
 that includes a method for creating the equivalent deterministic automata. The 
 given driver class demonstrates this functionality.
 ## Reflection
-Rich:
+Rich: This project went well overall, the most difficult part for me was wrapping
+my head around how to implement the getDFA() method. I think that I could of 
+done a better job managing my time if we had set due date for some part of 
+the project.
 Ethan: The development process went pretty well for me overall. I probably 
 wasted the most time with my first attempt of implementing the getDFA() method.
 I was trying to create every possible state using the powerset which turned out
